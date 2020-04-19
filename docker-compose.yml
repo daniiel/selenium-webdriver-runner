@@ -1,0 +1,43 @@
+version: "3"
+services:
+
+  hub:
+    image: selenium/hub
+
+  chrome:
+    image: selenium/node-chrome
+    environment:
+      - HUB_HOST=hub
+    depends_on:
+      - hub
+
+  firefox:
+    image: selenium/node-firefox
+    environment:
+      - HUB_HOST=hub
+    depends_on:
+      - hub
+      
+  search-module:
+    image: selenium-docker
+    environment:
+      - BROWSER=firefox
+      - HUB_HOST=hub
+      - MODULE=search-module.xml
+    depends_on:
+      - chrome
+      - firefox
+    volumes:
+      - ./output/search-result:/usr/share/selenium/test-output
+
+  book-flight-module:
+    image: selenium-docker
+    environment:
+      - BROWSER=chrome
+      - HUB_HOST=hub
+      - MODULE=search-module.xml
+    depends_on:
+      - chrome
+      - firefox
+    volumes:
+      - ./output/book-result:/usr/share/selenium/test-output
